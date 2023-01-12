@@ -13,11 +13,10 @@ void main(int argc, char **argv){
     
     FILE *mpeg_file_out = fopen(filename,"wb");
 
-    long int buffer_size_max = *argv[2] * 1000000;//1024 *1024;
+    long int buffer_size_max = (atoi(&(*argv[2]))) *1000000;
     long int buffer_size = 0;
     char *buffer = malloc(sizeof(char)*buffer_size_max);
     char byte[4];
-
     long int new_file_size = 0;
 
 
@@ -25,12 +24,7 @@ void main(int argc, char **argv){
 
         fread(byte,4,1,mpeg_file);
 
-        if(feof(mpeg_file)){
-                fclose(mpeg_file_out);
-                break;
-        }
-
-        if (memcmp(byte,"\x00\x00\x01\xB3",4) != 0){
+        if (memcmp(byte,"\x00\x00\x01\xB3",4) != 0 && !(feof(mpeg_file))){
             buffer[buffer_size] = byte[0];
             buffer_size++;
             fseek(mpeg_file,-3,SEEK_CUR);
@@ -51,14 +45,17 @@ void main(int argc, char **argv){
 
                 new_file_size = buffer_size;
             }
-            else {//if(new_file_size + buffer_size <= buffer_size_max){
+            else {
                 fwrite(buffer, buffer_size,1,mpeg_file_out);
                 new_file_size += buffer_size;
             }
-            // else{
-                memcpy(buffer,byte,4);
-                buffer_size = 4;
-            // }
+            if(feof(mpeg_file)){
+                fclose(mpeg_file_out);
+                break;
+            }
+            memcpy(buffer,byte,4);
+            buffer_size = 4;
+
         }
     }
     fclose(mpeg_file);
