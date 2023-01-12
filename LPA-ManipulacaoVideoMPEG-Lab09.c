@@ -2,7 +2,6 @@
 #include<string.h>
 #include<stdbool.h>
 #include<stdlib.h>
-#include<math.h>
 
 void main(int argc, char **argv){
     FILE *mpeg_file = fopen(argv[1],"rb");
@@ -37,12 +36,7 @@ void main(int argc, char **argv){
                 sprintf(filename,"video_parte_%d.mpg",i);
                 printf("Criando arquivo %s ..\n",filename);
                 mpeg_file_out = fopen(filename,"wb");
-                //fseek(mpeg_file_out, 0L, SEEK_END);
-                //new_file_size = ftell(mpeg_file_out);
-                //fseek(mpeg_file_out, 0L, SEEK_SET);
-
                 fwrite(buffer, buffer_size,1,mpeg_file_out);
-
                 new_file_size = buffer_size;
             }
             else {
